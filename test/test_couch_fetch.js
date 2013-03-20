@@ -34,6 +34,8 @@ describe('couchCache get',function(){
                                        });
                             }
                            ,function(cb){
+                                endts =  new Date(2008,8,25,15,0).getTime()/1000
+
                                 var feature = {'properties':{'detector_id':'1010510'
                                                             ,'ts':ts
                                                             ,'endts':endts
