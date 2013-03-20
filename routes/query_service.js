@@ -7,6 +7,8 @@ function query_service(app,prefix){
            ,function(req,res,next){
                 if(['json','csv'].indexOf(req.params.format.toLowerCase()) === -1)
                     return next()
+                if(['freeway','detector'].indexOf(req.params.spatialagg.toLowerCase()) === -1)
+                    return next('route')
                 // build the feature to extract
                 var start_end = get_time(req)
                 var feature = {'properties':{}}

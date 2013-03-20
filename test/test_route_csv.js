@@ -43,7 +43,8 @@ describe('couchCache get',function(){
                            if(e) return done(e)
                            r.statusCode.should.equal(200)
                            should.exist(b)
-                           console.log(b)
+                           // not much of a test.
+                           //console.log(b)
                            return done()
                        })
            })
@@ -57,7 +58,20 @@ describe('couchCache get',function(){
                            if(e) return done(e)
                            r.statusCode.should.equal(200)
                            should.exist(b)
-                           console.log(b)
+                           // not much of a test.
+                           //console.log(b)
+                           return done()
+                       })
+           })
+        it('should skip not freeway, not detector'
+          ,function(done){
+               // load the service for vds shape data
+               request({'url':'http://'+ testhost +':'+testport+'/hoppityhop/county/monthly/2008/1013410.csv'
+                       ,'headers':{'accept':'application/json'}
+                       ,'followRedirect':true}
+                      ,function(e,r,b){
+                           if(e) return done(e)
+                           r.statusCode.should.equal(404)
                            return done()
                        })
            })
