@@ -16,10 +16,11 @@ describe('couchCache get',function(){
     describe('monthly, by detector', function(){
         it('can get something',function(done){
             var accum = reducer();
-            var cacher = couch_cacher({'time_agg':'monthly'
-                                      ,'spatial_agg':'detector'})
+            var sagg = 'detector'
+            var cacher = couch_cacher.couchCache({'time_agg':'monthly'
+                                      ,'spatial_agg':sagg})
 
-            var getter = cacher.get(accum)
+            var getter = cacher.get(accum.process_collated_record)
             async.parallel([function(cb){
                                 var feature = {'properties':{'detector_id':'1013410'
                                                             ,'ts':ts
@@ -28,7 +29,7 @@ describe('couchCache get',function(){
 
                                 getter(feature
                                       ,function(e,d){
-                                           console.log(JSON.stringify(accum.stash_out()))
+                                           console.log(JSON.stringify(accum.stash_out(feature,sagg)))
                                            cb(e)
                                        });
                             }
@@ -39,7 +40,7 @@ describe('couchCache get',function(){
                                                             }}
                                 getter(feature
                                       ,function(e,d){
-                                           console.log(JSON.stringify(accum.stash_out()))
+                                           console.log(JSON.stringify(accum.stash_out(feature,sagg)))
                                            cb(e)
                                        })
                             }]
