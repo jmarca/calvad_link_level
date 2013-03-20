@@ -1,0 +1,31 @@
+{
+  "name": "calvad_link_level",
+  "version": "0.0.1",
+  "description": "CalVAD link level queries tool",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "lodash": "~1.0.1",
+    "async": "~0.2.6",
+    "request": "~2.14.0",
+    "geom_utils": "~0.0.2"
+  },
+  "devDependencies": {
+      "should": "~1.2.2"
+  },
+  "scripts": {
+    "test": "mocha --timeout 5000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmarca/calvad_link_level.git"
+  },
+  "keywords": [
+    "CalVAD"
+  ],
+  "author": "James E. Marca",
+  "license": "GPL v2",
+  "readmeFilename": "README.md"
+}
