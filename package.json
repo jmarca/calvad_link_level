@@ -2,7 +2,7 @@
   "name": "calvad_link_level",
   "version": "0.0.1",
   "description": "CalVAD link level queries tool",
-  "main": "index.js",
+  "main": "routes/query_service.js",
   "directories": {
     "test": "test"
   },
