@@ -3,8 +3,10 @@ var get_time = require('../lib/get_time').get_time
 function query_service(app,prefix){
     if (prefix === undefined) prefix = ''
     // need to handle trailing slash properly
-    app.get('/'+prefix+'/:spatialagg/:aggregate/:year/:detector_id.json'
+    app.get('/'+prefix+'/:spatialagg/:aggregate/:year/:detector_id.:format'
            ,function(req,res,next){
+                if(['json','csv'].indexOf(req.params.format.toLowerCase()) === -1)
+                    return next()
                 // build the feature to extract
                 var start_end = get_time(req)
                 var feature = {'properties':{}}
