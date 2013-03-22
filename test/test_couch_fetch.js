@@ -29,7 +29,6 @@ describe('couchCache get',function(){
 
                                 getter(feature
                                       ,function(e,d){
-                                           console.log(JSON.stringify(accum.stash_out(feature,sagg)))
                                            cb(e)
                                        });
                             }
@@ -42,7 +41,6 @@ describe('couchCache get',function(){
                                                             }}
                                 getter(feature
                                       ,function(e,d){
-                                           console.log(JSON.stringify(accum.stash_out(feature,sagg)))
                                            cb(e)
                                        })
                             }]
