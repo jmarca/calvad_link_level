@@ -9,6 +9,7 @@
   "dependencies": {
     "lodash": "",
     "async": "",
+      "csv":"",
     "request": "",
     "geom_utils": "git://github.com/jmarca/geom_utils.git"
   },

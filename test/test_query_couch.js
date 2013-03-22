@@ -31,10 +31,13 @@ describe('couchCache get',function(){
                         feature.properties.endts = start_end.end.getTime()/1000
                         feature.properties.detector_id = req.params.detector_id
                         req.params['feature'] = feature
-                        console.log(req.params)
                         return next()
                     }
                    ,calvad_querier.get_id
+                   ,function(req,res,next){
+                        res.json(req.params.feature)
+                        return res.end()
+                    }
                    )
 
             server=http

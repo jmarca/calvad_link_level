@@ -2,7 +2,7 @@ var calvad_querier = require('../lib/query_couch')
 var get_time = require('../lib/get_time').get_time
 var csv = require('csv')
 
-var build_csv=require('./build_csv')
+var build_csv=require('../lib/build_csv')
 var columns = build_csv.columns
 var dh=build_csv.dh
 build_csv = build_csv.build_csv
@@ -50,7 +50,6 @@ function query_service(app,prefix){
                     return res.end()
                 }
                 if(req.params.format.toLowerCase() === 'json'){
-                    res.writeHead(200, { 'Content-Type': 'application/json' })
                     res.json(req.params.feature)
                     return res.end()
                 }
