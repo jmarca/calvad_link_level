@@ -1,33 +1,34 @@
 {
-  "name": "calvad_link_level",
-  "version": "0.0.1",
-  "description": "CalVAD link level queries tool",
-  "main": "routes/query_service.js",
-  "directories": {
-    "test": "test"
-  },
-  "dependencies": {
-    "lodash": "",
-    "async": "",
-      "csv":"",
-    "request": "",
-    "geom_utils": "git://github.com/jmarca/geom_utils.git"
-  },
-  "devDependencies": {
-      "should": "",
-      "express": ""
-  },
-  "scripts": {
-    "test": "mocha --timeout 5000"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jmarca/calvad_link_level.git"
-  },
-  "keywords": [
-    "CalVAD"
-  ],
-  "author": "James E. Marca",
-  "license": "GPL v2",
-  "readmeFilename": "README.md"
+    "name": "calvad_link_level",
+    "version": "0.0.1",
+    "description": "CalVAD link level queries tool",
+    "main": "index.js",
+    "directories": {
+        "test": "test"
+    },
+    "dependencies": {
+        "lodash": "",
+        "async": "",
+        "csv":"",
+        "superagent":"",
+        "detector_postgis_query":"git://github.com/jmarca/detector_postgis_query.git",
+        "geom_utils": "git://github.com/jmarca/geom_utils.git"
+    },
+    "devDependencies": {
+        "should": "",
+        "express": ""
+    },
+    "scripts": {
+        "test": "mocha --timeout 5000"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jmarca/calvad_link_level.git"
+    },
+    "keywords": [
+        "CalVAD"
+    ],
+    "author": "James E. Marca",
+    "license": "GPL v2",
+    "readmeFilename": "README.md"
 }

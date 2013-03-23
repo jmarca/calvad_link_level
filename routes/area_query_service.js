@@ -13,7 +13,7 @@ var pport = env.PSQL_PORT || 5432
 var pdb = env.PSQL_DB
 
 var csv = require('csv')
-var build_csv=require('./build_csv')
+var build_csv=require('../lib/build_csv')
 var columns = build_csv.columns
 var dh=build_csv.dh
 build_csv = build_csv.build_csv
@@ -46,7 +46,7 @@ function area_query_service(app,opts){
     // merge pipe csv
 
 
-    app.get('/'+prefix+'/:area/link_level/:aggregate/:year/:detector_id.:format'
+    app.get('/'+prefix+'/:area/link_level/:aggregate/:year/:areaid.:format'
            ,function(req,res,next){
                 if(['json','csv'].indexOf(req.params.format.toLowerCase()) === -1)
                     return next('route')

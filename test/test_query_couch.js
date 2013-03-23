@@ -4,7 +4,7 @@ var should = require('should')
 
 var async = require('async')
 var _ = require('lodash')
-var request = require('request')
+var superagent = require('superagent')
 var express = require('express')
 var http = require('http')
 var testport = process.env.TEST_PORT || 3000
@@ -52,14 +52,13 @@ describe('couchCache get',function(){
     it('should spit out monthly data by detector'
       ,function(done){
            // load the service for vds shape data
-           request({'url':'http://'+ testhost +':'+testport+'/data6/detector/monthly/2008/1013410.json'
-                   ,'headers':{'accept':'application/json'}
-                   ,'followRedirect':true}
-                  ,function(e,r,b){
+           superagent.get('http://'+ testhost +':'+testport+'/data6/detector/monthly/2008/1013410.json')
+           .set('Accept','application/json')
+           .set('followRedirect',true)
+           .end(function(e,r){
                        if(e) return done(e)
-                       r.statusCode.should.equal(200)
-                       should.exist(b)
-                       var c = JSON.parse(b)
+                       r.status.should.equal(200)
+                       var c = r.body
                        c.should.have.property('header')
                        c.should.have.property('properties')
                        c.properties.should.have.property('data')
@@ -72,14 +71,13 @@ describe('couchCache get',function(){
     it('should spit out monthly data by freeway'
       ,function(done){
            // load the service for vds shape data
-           request({'url':'http://'+ testhost +':'+testport+'/data6/freeway/monthly/2008/1013410.json'
-                   ,'headers':{'accept':'application/json'}
-                   ,'followRedirect':true}
-                  ,function(e,r,b){
+           superagent('http://'+ testhost +':'+testport+'/data6/freeway/monthly/2008/1013410.json')
+           .set('Accept','application/json')
+           .set('followRedirect',true)
+           .end(function(e,r){
                        if(e) return done(e)
-                       r.statusCode.should.equal(200)
-                       should.exist(b)
-                       var c = JSON.parse(b)
+                       r.status.should.equal(200)
+                       var c = r.body
                        c.should.have.property('header')
                        c.should.have.property('properties')
                        c.properties.should.have.property('data')
@@ -92,14 +90,13 @@ describe('couchCache get',function(){
     it('should spit out daily data'
       ,function(done){
            // load the service for vds shape data
-           request({'url':'http://'+ testhost +':'+testport+'/data6/detector/daily/2008/1013410.json'
-                   ,'headers':{'accept':'application/json'}
-                   ,'followRedirect':true}
-                  ,function(e,r,b){
+           superagent('http://'+ testhost +':'+testport+'/data6/detector/daily/2008/1013410.json')
+           .set('Accept','application/json')
+           .set('followRedirect',true)
+           .end(function(e,r){
                        if(e) return done(e)
-                       r.statusCode.should.equal(200)
-                       should.exist(b)
-                       var c = JSON.parse(b)
+                       r.status.should.equal(200)
+                       var c = r.body
                        c.should.have.property('header')
                        c.should.have.property('properties')
                        c.properties.should.have.property('data')
@@ -111,14 +108,13 @@ describe('couchCache get',function(){
     it('should get wim ids too'
       ,function(done){
            // load the service for vds shape data
-           request({'url':'http://'+ testhost +':'+testport+'/data6/detector/daily/2008/wim.10.N.json'
-                   ,'headers':{'accept':'application/json'}
-                   ,'followRedirect':true}
-                  ,function(e,r,b){
+           superagent('http://'+ testhost +':'+testport+'/data6/detector/daily/2008/wim.10.N.json')
+           .set('Accept','application/json')
+           .set('followRedirect',true)
+           .end(function(e,r){
                        if(e) return done(e)
-                       r.statusCode.should.equal(200)
-                       should.exist(b)
-                       var c = JSON.parse(b)
+                       r.status.should.equal(200)
+                       var c = r.body
                        c.should.have.property('header')
                        c.should.have.property('properties')
                        c.properties.should.have.property('data')
