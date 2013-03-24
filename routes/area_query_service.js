@@ -2,7 +2,7 @@ var calvad_querier = require('../lib/query_couch')
 var get_time = require('../lib/get_time').get_time
 var geoQuery = require('detector_postgis_query').geoQuery
 var pg = require('pg')
-
+var _ = require('lodash')
 var async = require('async')
 
 var env = process.env
@@ -48,8 +48,10 @@ function area_query_service(app,opts){
 
     app.get('/'+prefix+'/:area/link_level/:aggregate/:year/:areaid.:format'
            ,function(req,res,next){
-                if(['json','csv'].indexOf(req.params.format.toLowerCase()) === -1)
+                if(['json','csv'].indexOf(req.params.format.toLowerCase()) === -1){
+                    console.log('bad route')
                     return next('route')
+                }
 
 
 // Okay, I need to refactor query_couch to extract the csv and json stuff
@@ -63,15 +65,14 @@ function area_query_service(app,opts){
 // a detector is done.
 //
                 // extract area
-                var area_handler = function(next){
-                    var doGeo = geoQuery(req,function(err,features){
-                                    if(err) return next(err)
-                                    req.params.features=features
-                                    return next(null)
-                                })
-                    var connectionString = "pg://"+user+":"+pass+"@"+host+":"+port+"/"+db;
-                    pg.connect(connectionString, doGeo);
-                }
+                var doGeo = geoQuery(req,function(err,features){
+                                if(err) return next(err)
+                                req.params.features=features
+                                return next(null)
+                            })
+                var connectionString = "pg://"+user+":"+pass+"@"+host+":"+port+"/"+db
+                console.log(connectionString)
+                pg.connect(connectionString, doGeo)
                 return null
             }
            ,function(req,res,next){
@@ -81,7 +82,6 @@ function area_query_service(app,opts){
                 // and need to multiplex it
 
                 if(req.params.format.toLowerCase() === 'json'){
-                    res.writeHead(200, { 'Content-Type': 'application/json' })
                     res.json(req.params.features)
                     return res.end()
                 }

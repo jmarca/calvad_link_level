@@ -49,7 +49,7 @@ describe('couchCache get',function(){
         it('should spit out a list of detectors in the area when called via json'
           ,function(done){
                // load the service for vds shape data
-               superagent.get('http://'+ testhost +':'+testport+'/hoppityhop/county/link_level/monthly/2009/06003.json')
+               superagent.get('http://'+ testhost +':'+testport+'/hoppityhop/counties/link_level/monthly/2009/06019.json')
                .set({'headers':{'accept':'application/json'}
                     ,'followRedirect':true})
                .end(function(e,r){
@@ -57,6 +57,21 @@ describe('couchCache get',function(){
                    r.should.have.status(200)
                    var c = r.body
                    c.should.have.property('length')
+                   console.log(c.length)
+                   return done()
+               })
+           })
+
+        it('should spit out a list of data in the area when called via csv'
+          ,function(done){
+               // load the service for vds shape data
+               superagent.get('http://'+ testhost +':'+testport+'/hoppityhop/counties/link_level/monthly/2009/06019.csv')
+               .set({'headers':{'accept':'text/csv'}
+                    ,'followRedirect':true})
+               .end(function(e,r){
+                   if(e) return done(e)
+                   r.should.have.status(200)
+                   var c = r.text
                    console.log(c.length)
                    return done()
                })

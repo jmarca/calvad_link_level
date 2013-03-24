@@ -10,6 +10,7 @@
         "lodash": "",
         "async": "",
         "csv":"",
+        "pg":"",
         "superagent":"",
         "detector_postgis_query":"git://github.com/jmarca/detector_postgis_query.git",
         "geom_utils": "git://github.com/jmarca/geom_utils.git"
