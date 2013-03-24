@@ -107,7 +107,7 @@ function area_query_service(app,opts){
                     req.params['csv_builder'] = builder
 
                 var start_end = get_time(req)
-                req.params['spatialagg']='freeway'
+                req.params['spatialagg']='detector'
 
                 // set up a queue processor
                 var detector_handler = function(feature,done){
@@ -118,9 +118,6 @@ function area_query_service(app,opts){
                 var feature_queue=async.queue(detector_handler,5)
                 _.each(req.params.features
                       ,function(feature){
-                           // force the time to the full year
-                           feature.properties.ts = start_end.start.getTime()/1000
-                           feature.properties.endts = start_end.end.getTime()/1000
                            feature_queue.push(feature)
                        })
                 feature_queue.drain=function(){
