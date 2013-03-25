@@ -57,8 +57,8 @@ describe('couchCache get',function(){
                    r.should.have.status(200)
                    var c = r.body
                    c.should.have.property('length')
-                   console.log(c)
-                   
+                   console.log(c.length)
+
                    return done()
                })
            })

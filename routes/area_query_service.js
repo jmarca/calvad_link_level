@@ -64,7 +64,7 @@ function area_query_service(app,opts){
                     }
     var vdsservice = shape_service(vds_options)
 
-    app.get('/'+prefix+'/:area/link_level/:aggregate/:year/:areaid.:format'
+    app.get('/'+prefix+'/:areatype/link_level/:aggregate/:year/:area.:format'
            ,function(req,res,next){
                 if(['json','csv'].indexOf(req.params.format.toLowerCase()) === -1){
                     console.log('bad route')
@@ -161,8 +161,9 @@ function area_query_service(app,opts){
                 var feature_queue=async.queue(detector_handler,5)
                 _.each(req.params.collector
                       ,function(feature){
-                           feature.properties.ts = start_end.start.getTime()/1000
-                           feature.properties.endts = start_end.end.getTime()/1000
+                           var f = {'properties':feature}
+                           f.properties.ts = start_end.start.getTime()/1000
+                           f.properties.endts = start_end.end.getTime()/1000
                            feature_queue.push(feature)
                        })
                 feature_queue.drain=function(){
