@@ -58,9 +58,10 @@ function area_query_service(app,opts){
                                          ,'t.direction'  : 'direction'
                                          ,'t.detector_id': 'detector_id'
                                          }
-                    ,'id_col':['detector_id']
+                    ,'id_col':['detector_id','direction']
                     ,'area_type_param':'areatype'
                     ,'area_param':'area'
+                    ,'where_clause':'1=1 order by detector_id,direction'
                     }
     var vdsservice = shape_service(vds_options)
 
@@ -164,15 +165,13 @@ function area_query_service(app,opts){
                            var f = {'properties':feature}
                            f.properties.ts = start_end.start.getTime()/1000
                            f.properties.endts = start_end.end.getTime()/1000
-                           feature_queue.push(feature)
+                           feature_queue.push(f)
                        })
                 feature_queue.drain=function(){
-                    next()
-                    return null
+                    return res.end()
                 }
                 return null
             }
-           ,calvad_querier.get_id
            )
 
 }

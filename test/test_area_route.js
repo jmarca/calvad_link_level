@@ -7,6 +7,9 @@ var _ = require('lodash')
 var superagent = require('superagent')
 var express = require('express')
 var http = require('http')
+
+var csv = require('csv')
+
 var env = process.env
 var puser = env.PSQL_TEST_USER
 var ppass = env.PSQL_TEST_PASS
@@ -56,9 +59,14 @@ describe('couchCache get',function(){
                    if(e) return done(e)
                    r.should.have.status(200)
                    var c = r.body
-                   c.should.have.property('length')
-                   console.log(c.length)
-
+                   c.should.have.property('length',166)
+                   var did = {}
+                   _.each(c
+                         ,function(record){
+                              record.should.have.property('id')
+                              did.should.not.have.property(record.id)
+                              did[record.id]=1
+                          })
                    return done()
                })
            })
@@ -73,7 +81,26 @@ describe('couchCache get',function(){
                    if(e) return done(e)
                    r.should.have.status(200)
                    var c = r.text
-                   console.log(c)
+                   var detector_time_hash={}
+                   var detector_hash={}
+                   csv()
+                   .from(c, {columns: true} )
+                   //.to.path( "./test/string_to_stream.tmp" )
+                   .on( 'record', function(record, index){
+                       record.should.have.property('time stamp')
+                       record.should.have.property('detector')
+                       if(record['time stamp'] && record['detector']){
+                           var key = [record['time stamp'],record.detector].join('_')
+                           detector_time_hash.should.not.have.property(key)
+                           detector_time_hash[key]=1
+                       }
+                       if(record['detector']) detector_hash[record.detector] = 1
+                   })
+                   .on('end',function(count){
+                       var numdetectors =_.size(detector_hash)
+                       numdetectors.should.eql(99)
+                   })
+                   //console.log(c)
                    return done()
                })
            })
