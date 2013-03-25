@@ -1,7 +1,8 @@
 var calvad_querier = require('../lib/query_couch')
 var get_time = require('../lib/get_time').get_time
-var geoQuery = require('detector_postgis_query').geoQuery
-var pg = require('pg')
+//var geoQuery = require('detector_postgis_query').geoQuery
+var shape_service = require('shapes_postgis').shape_geojson_generation
+
 var _ = require('lodash')
 var async = require('async')
 
@@ -45,8 +46,26 @@ function area_query_service(app,opts){
     // process detectors
     // merge pipe csv
 
+    // extract area using shapes_postgis library
+    var vds_options={'db':'osm'
+                    ,'table':'tempseg.tdetector'
+                    ,'alias':'t'
+                    ,'host':host
+                    ,'username':user
+                    ,'password':pass
+                    ,'port':port
+                    ,'select_properties':{'t.refnum'     : 'freeway'
+                                         ,'t.direction'  : 'direction'
+                                         ,'t.detector_id': 'detector_id'
+                                         }
+                    ,'id_col':['detector_id','direction']
+                    ,'area_type_param':'areatype'
+                    ,'area_param':'area'
+                    ,'where_clause':'1=1 order by detector_id,direction'
+                    }
+    var vdsservice = shape_service(vds_options)
 
-    app.get('/'+prefix+'/:area/link_level/:aggregate/:year/:areaid.:format'
+    app.get('/'+prefix+'/:areatype/link_level/:aggregate/:year/:area.:format'
            ,function(req,res,next){
                 if(['json','csv'].indexOf(req.params.format.toLowerCase()) === -1){
                     console.log('bad route')
@@ -64,16 +83,41 @@ function area_query_service(app,opts){
 // that would be fine, as long as I don't try to close the stream when
 // a detector is done.
 //
-                // extract area
-                var doGeo = geoQuery(req,function(err,features){
-                                if(err) return next(err)
-                                req.params.features=features
-                                return next(null)
-                            })
-                var connectionString = "pg://"+user+":"+pass+"@"+host+":"+port+"/"+db
-                console.log(connectionString)
-                pg.connect(connectionString, doGeo)
-                return null
+
+                var collector=[]
+
+                var callback = function(){
+                    req.params.collector = collector
+                    next()
+                }
+                req.params['row_handler']= function(row){
+                    var val = {}
+                    _.each(vds_options.select_properties
+                          ,function(v,k){
+                               val[v] = row[v]
+                           });
+                    if(vds_options.id_col !== undefined){
+                        var id = _.map(vds_options.id_col
+                                      ,function(k){
+                                           return row[k]
+                                       })
+                        if(_.isArray(id))
+                            id = id.join('_')
+                        val.id = id
+                    }
+                    collector.push(val)
+                }
+
+                return vdsservice(req,res,next,callback)
+                // var doGeo = geoQuery(req,function(err,features){
+                //                 if(err) return next(err)
+                //                 req.params.features=features
+                //                 return next(null)
+                //             })
+                // var connectionString = "pg://"+user+":"+pass+"@"+host+":"+port+"/"+db
+                // console.log(connectionString)
+                // pg.connect(connectionString, doGeo)
+                // return null
             }
            ,function(req,res,next){
                 // now,handle features list.
@@ -82,7 +126,7 @@ function area_query_service(app,opts){
                 // and need to multiplex it
 
                 if(req.params.format.toLowerCase() === 'json'){
-                    res.json(req.params.features)
+                    res.json(req.params.collector)
                     return res.end()
                 }
 
@@ -116,17 +160,18 @@ function area_query_service(app,opts){
                     calvad_querier.get_id(localreq,null,done)
                 }
                 var feature_queue=async.queue(detector_handler,5)
-                _.each(req.params.features
+                _.each(req.params.collector
                       ,function(feature){
-                           feature_queue.push(feature)
+                           var f = {'properties':feature}
+                           f.properties.ts = start_end.start.getTime()/1000
+                           f.properties.endts = start_end.end.getTime()/1000
+                           feature_queue.push(f)
                        })
                 feature_queue.drain=function(){
-                    next()
-                    return null
+                    return res.end()
                 }
                 return null
             }
-           ,calvad_querier.get_id
            )
 
 }
