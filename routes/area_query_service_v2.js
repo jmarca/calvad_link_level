@@ -29,6 +29,8 @@ function area_query_service(app,opts){
         throw new Error('need user, pass, db defined in options object or environment variables')
     }
 
+    if(opts.area_type_param === undefined) opts.area_type_param = 'areatype'
+    if(opts.area_param === undefined) opts.area_param = 'area'
 
     // extract area
     //
@@ -51,27 +53,25 @@ function area_query_service(app,opts){
     function geohandler(req,res,next){
         // extract area using geoQuery library
 
-        var doGeo = geoQuery(req,function(err,features){
-                        if(err){
-                            return next(err)
-                        }
-                        // need to collate features according to detector_id
-                        features = _.map(features
-                                        ,function(f){
-                                             return {'properties':f}
-                                         });
-                        features = _.groupBy(features,'detector_id')
-                        logger.debug(features)
+        var doGeo = geoQuery(req
+                            ,{'area_type_param':opts.area_type_param
+                             ,'area_param':opts.area_param}
 
-                        req.params.collector = _.values(features)
-                        logger.debug('passing along '+req.params.collector.length+' features')
-                        return next()
-                    })
+                            ,function(err,features){
+                                 if(err){
+                                     return next(err)
+                                 }
+                                 // need to collate features according to detector_id
+                                 features = _.groupBy(features,function(f){return f.properties.detector_id})
+                                 req.params.collector = _.values(features)
+                                 logger.debug('passing along '+req.params.collector.length+' features')
+                                 return next()
+                             })
         pg.connect(osmConnectionString, doGeo);
         return null
     }
 
-    app.get('/'+prefix+'/:areatype/link_level/:aggregate/:year/:area.:format'
+    app.get('/'+prefix+'/:'+opts.area_type_param+'/link_level/:aggregate/:year/:'+opts.area_param+'.:format'
            ,function(req,res,next){
                 if(['json','csv'].indexOf(req.params.format.toLowerCase()) === -1){
                     console.log('bad route')
