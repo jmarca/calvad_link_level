@@ -1,6 +1,8 @@
 var geoQuery = require('detector_postgis_query').geoQuery
 //var shape_service = require('shapes_postgis').shape_geojson_generation
 var json_or_csv_handler = require('../lib/json_or_csv_handler').json_or_csv_handler
+var logger = require('../lib/logging').logger
+var _ = require('lodash')
 
 var env = process.env
 var puser = env.PSQL_USER
@@ -36,19 +38,37 @@ function area_query_service(app,opts){
     // process detectors
     // merge pipe csv
 
+                // var doGeo = geoQuery(req,function(err,features){
+                //                 if(err) return next(err)
+                //                 req.params.features=features
+                //                 return next(null)
+                //             })
+                // var connectionString = "pg://"+user+":"+pass+"@"+host+":"+port+"/"+db
+                // console.log(connectionString)
+                // pg.connect(connectionString, doGeo)
+                // return null
     var osmConnectionString = "pg://"+puser+":"+ppass+"@"+phost+":"+pport+"/osm";
     function geohandler(req,res,next){
         // extract area using geoQuery library
 
-            var doGeo = geoQuery(req,function(err,features){
-                            if(err){
-                                return next(err)
-                            }
-                            req.params.collector = features
-                            logger.debug('passing along '+features.length+' features')
-                            return next()
-                        })
-            pg.connect(osmConnectionString, doGeo);
+        var doGeo = geoQuery(req,function(err,features){
+                        if(err){
+                            return next(err)
+                        }
+                        // need to collate features according to detector_id
+                        features = _.map(features
+                                        ,function(f){
+                                             return {'properties':f}
+                                         });
+                        features = _.groupBy(features,'detector_id')
+                        logger.debug(features)
+
+                        req.params.collector = _.values(features)
+                        logger.debug('passing along '+req.params.collector.length+' features')
+                        return next()
+                    })
+        pg.connect(osmConnectionString, doGeo);
+        return null
     }
 
     app.get('/'+prefix+'/:areatype/link_level/:aggregate/:year/:area.:format'
