@@ -4,7 +4,7 @@ var get_time = require('../lib/get_time').get_time
 var shape_service = require('shapes_postgis').shape_geojson_generation
 var json_or_csv_handler = require('../lib/json_or_csv_handler').json_or_csv_handler
 var logger = require('../lib/logging').logger
-
+var _ = require('lodash')
 
 var env = process.env
 var puser = env.PSQL_USER
