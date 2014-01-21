@@ -60,6 +60,7 @@ describe('couchCache get',function(){
                    r.should.have.status(200)
                    var c = r.body
                    c.should.have.property('length',166)
+                   console.log(c)
                    var did = {}
                    _.each(c
                          ,function(record){
@@ -81,6 +82,7 @@ describe('couchCache get',function(){
                    if(e) return done(e)
                    r.should.have.status(200)
                    var c = r.text
+                   console.log(c)
                    var detector_time_hash={}
                    var detector_hash={}
                    csv()
